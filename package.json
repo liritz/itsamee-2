@@ -3,17 +3,28 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "postinstall": "netlify-lambda install",
+    "preserve": "npm run compile-lambda",
     "serve": "vue-cli-service serve",
+    "prebuild": "npm run compile-lambda",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "postbuild": "npm run build-lambda",
+    "lint": "vue-cli-service lint",
+    "build-lambda": "netlify-lambda build src/generated/functions",
+    "compile-lambda": "tsc --outDir src/generated src/functions/*"
   },
   "dependencies": {
+    "axios": "^0.21.0",
     "core-js": "^3.6.5",
+    "netlify-lambda": "^2.0.1",
     "vue": "^3.0.0",
+    "vue-axios": "^3.2.0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.10.1",
+    "@types/aws-lambda": "^8.10.57",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
     "@vue/cli-plugin-babel": "~4.5.0",
