@@ -5,17 +5,24 @@ import { APIGatewayEvent, Context, Handler } from "aws-lambda";
 import axios from "axios";
 import { createFlickrConfig } from "../helpers/createFlickrConfig";
 
+type ItsameeResponse = {
+  statusCode: number,
+  statusText?: "ok",
+  body: string
+}
+
+
 if (!process.env.FLICKR_URL) {
   throw new Error("FLICKR_URL undefined!");
 }
 const url = process.env.FLICKR_URL;
 
-const shortCache = "";
+let cache: ItsameeResponse | null = null;
 
 export const handler: Handler = async (
   event: APIGatewayEvent,
   context: Context
-) => {
+): Promise<ItsameeResponse> => {
   if (!context.clientContext) {
     return {
       statusCode: 500,
@@ -23,23 +30,25 @@ export const handler: Handler = async (
         msg: "No client context!"
       })
     };
-
   }
 
-  return axios.get(
+  if (!cache) {
+    const {data, statusText, status} = await axios.get(
       url,
       createFlickrConfig(
         "photosets.getList",
         {"primary_photo_extras": "date_taken,url_sq,url_t,url_s,url_m,url_o"}
-      ))
-    .then(response => {
-      console.log(JSON.stringify(response))
-      return response
-    })
-    .catch(error => {
-      console.log(JSON.stringify(error));
-      return error;
-    });
+      ));
+    console.log("loaded Data!");
+    cache = {
+      statusCode: status,
+      statusText,
+      body: data
+    };
+  }
+  return cache;
+
+
 
   
   // axios.get(url, {
