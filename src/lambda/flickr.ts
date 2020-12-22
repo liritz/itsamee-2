@@ -7,6 +7,17 @@ type ItsameeResponse = {
   body: string;
 };
 
+if (
+  !(
+    process.env.FLICKR_URL &&
+    process.env.FLICKR_API_KEY &&
+    process.env.FLICKR_USER_ID
+  )
+) {
+  throw new Error("Environment not properly set up!");
+}
+const flickrURL = process.env.FLICKR_URL;
+
 const createFlickrConfig = (
   method: string,
   params?: { [key: string]: string }
@@ -31,11 +42,6 @@ const createErrorResponse = (
   statusCode,
   body: JSON.stringify({ message: message ?? "unknown error" })
 });
-
-if (!process.env.FLICKR_URL) {
-  throw new Error("FLICKR_URL undefined!");
-}
-const url = process.env.FLICKR_URL;
 
 const cache: { [key: string]: ItsameeResponse } = {};
 
@@ -62,7 +68,7 @@ export const handler: Handler = async (
 
   if (!cache[callType]) {
     const { data, statusText, status } = await axios.get(
-      url,
+      flickrURL,
       createFlickrConfig(method, queryParams)
     );
     cache[callType] = {
