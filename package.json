@@ -10,8 +10,8 @@
     "build": "vue-cli-service build",
     "postbuild": "npm run build-lambda",
     "lint": "vue-cli-service lint",
-    "build-lambda": "netlify-lambda build src/generated/functions",
-    "compile-lambda": "tsc --outDir src/generated src/functions/*"
+    "build-lambda": "netlify-lambda build src/generated",
+    "compile-lambda": "tsc --outDir src/generated src/lambda/*"
   },
   "dependencies": {
     "axios": "^0.21.0",
