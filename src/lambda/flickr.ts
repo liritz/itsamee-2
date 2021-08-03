@@ -1,11 +1,5 @@
-import { APIGatewayEvent, Context, Handler } from "aws-lambda";
+import { Handler, HandlerResponse } from "@netlify/functions"
 import axios, { AxiosRequestConfig } from "axios";
-
-type ItsameeResponse = {
-  statusCode: number;
-  statusText?: string;
-  body: string;
-};
 
 if (
   !(
@@ -20,7 +14,7 @@ const flickrURL = process.env.FLICKR_URL;
 
 const createFlickrConfig = (
   method: string,
-  params?: { [key: string]: string }
+  params?: { [key: string]: string | undefined }
 ): AxiosRequestConfig => ({
   responseType: "text",
   params: {
@@ -38,17 +32,17 @@ const createFlickrConfig = (
 const createErrorResponse = (
   statusCode: number,
   message?: string
-): ItsameeResponse => ({
+): HandlerResponse => ({
   statusCode,
   body: JSON.stringify({ message: message ?? "unknown error" })
 });
 
-const cache: { [key: string]: ItsameeResponse } = {};
+const cache: { [key: string]: HandlerResponse } = {};
 
 export const handler: Handler = async (
-  { queryStringParameters }: APIGatewayEvent,
-  context: Context
-): Promise<ItsameeResponse> => {
+  { queryStringParameters },
+  context
+) => {
   if (!context.clientContext) {
     return createErrorResponse(500, "No client context!");
   }
@@ -67,13 +61,12 @@ export const handler: Handler = async (
     500}`;
 
   if (!cache[callType]) {
-    const { data, statusText, status } = await axios.get(
+    const { data, status } = await axios.get(
       flickrURL,
       createFlickrConfig(method, queryParams)
     );
     cache[callType] = {
       statusCode: status,
-      statusText,
       body: data
     };
   }
