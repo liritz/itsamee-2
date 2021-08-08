@@ -1,5 +1,5 @@
-import { TextEntry } from "@/types/TextEntry";
-import { Photo } from "@/types/Photo";
+import { TextEntry } from "@/types/Flickr/TextEntry";
+import { Photo } from "@/types/Flickr/Photo";
 
 export interface Photoset {
   id: string;

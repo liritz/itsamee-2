@@ -1,4 +1,4 @@
-import { Handler, HandlerResponse } from "@netlify/functions"
+import { Handler, HandlerResponse } from "@netlify/functions";
 import axios, { AxiosRequestConfig } from "axios";
 
 if (
@@ -39,10 +39,7 @@ const createErrorResponse = (
 
 const cache: { [key: string]: HandlerResponse } = {};
 
-export const handler: Handler = async (
-  { queryStringParameters },
-  context
-) => {
+export const handler: Handler = async ({ queryStringParameters }, context) => {
   if (!context.clientContext) {
     return createErrorResponse(500, "No client context!");
   }

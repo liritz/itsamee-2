@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import CollectionPage from "@/components/CollectionPage.vue"
+import CollectionPage from "@/components/CollectionPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
