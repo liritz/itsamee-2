@@ -7,24 +7,18 @@ interface GetTreeResponse {
 }
 
 interface PhotosetListResponse {
-    photosets: {
-      page: number;
-      pages: number;
-      perpage: number;
-      total: number;
-      photoset: Array<Photoset>;
-    };
-  }
+  photosets: {
+    page: number;
+    pages: number;
+    perpage: number;
+    total: number;
+    photoset: Array<Photoset>;
+  };
+}
 
 export const flickr = {
-
   async get<T>(params: { [key: string]: string }): Promise<T> {
-    const { data, status } = await axios.get("/flickr", {
-      params: {
-        ...params,
-        format: "json"
-      }
-    });
+    const { data, status } = await axios.get("/flickr", { params });
     if (status >= 300) {
       throw new Error(`Request failed with status: ${status}`);
     }
@@ -51,9 +45,12 @@ export const flickr = {
   },
 
   async listPhotosets(): Promise<Array<Photoset>> {
-    const {photosets: {photoset}} = await this.get<PhotosetListResponse>({
-        method: "photosets.getList",
-        "primary_photo_extras": "date_taken,original_format,url_m"
+    const {
+      photosets: { photoset }
+    } = await this.get<PhotosetListResponse>({
+      method: "photosets.getList",
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      primary_photo_extras: "date_taken,original_format,url_m"
     });
     return photoset;
   }

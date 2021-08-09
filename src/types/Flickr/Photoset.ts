@@ -1,5 +1,5 @@
 import { TextEntry } from "@/types/Flickr/TextEntry";
-import { Photo } from "@/types/Flickr/Photo";
+import { FlickrPhoto } from "@/types/Flickr/FlickrPhoto";
 
 export interface Photoset {
   id: string;
@@ -18,5 +18,5 @@ export interface Photoset {
   date_update: string;
   photos: number;
   videos: number;
-  primary_photo_extras?: Photo;
+  primary_photo_extras: FlickrPhoto;
 }

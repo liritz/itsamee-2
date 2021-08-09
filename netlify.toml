@@ -8,3 +8,8 @@
   from = "/flickr"
   to = "/.netlify/functions/flickr"
   force = true
+
+[[redirects]]
+  from = "/content"
+  to = "/.netlify/functions/data"
+  force = true

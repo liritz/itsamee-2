@@ -10,25 +10,25 @@ import { PrimeIcons } from "primevue/api";
 import Menubar from "primevue/menubar";
 
 const menuItemFromCollection = (collection: Collection): MenuItem => {
-  const label = collection.title
-  
+  const label = collection.title;
+
   if (collection.collection) {
     const items = collection.collection.map(col => ({
-        label: col.title,
-        to: `/collection/${col.id}`
+      label: col.title,
+      to: `/collection/${col.id}`
     }));
     return { label, items };
   }
 
   if (collection.set) {
     const items = collection.set.map(col => ({
-        label: col.title, 
-        to: `/set/${col.id}`
+      label: col.title,
+      to: `/set/${col.id}`
     }));
     return { label, items };
   }
 
-  const icon = PrimeIcons.ANGLE_DOWN
+  const icon = PrimeIcons.ANGLE_DOWN;
   const to = `/set/${collection.id}`;
 
   return { label, to, icon };

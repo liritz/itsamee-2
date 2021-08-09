@@ -1,5 +1,7 @@
 import { Handler, HandlerResponse } from "@netlify/functions";
-import axios, { AxiosRequestConfig } from "axios";
+import axios from "axios";
+import { createFlickrConfig } from "@/backend/createFlickrConfig";
+import { createErrorResponse } from "@/backend/createErrorResponse";
 
 if (
   !(
@@ -11,31 +13,6 @@ if (
   throw new Error("Environment not properly set up!");
 }
 const flickrURL = process.env.FLICKR_URL;
-
-const createFlickrConfig = (
-  method: string,
-  params?: { [key: string]: string | undefined }
-): AxiosRequestConfig => ({
-  responseType: "text",
-  params: {
-    ...params,
-    //es-lint-disable-next-line
-    api_key: process.env.FLICKR_API_KEY,
-    //es-lint-disable-next-line
-    user_id: process.env.FLICKR_USER_ID,
-    format: "json",
-    method: method.startsWith("flickr.") ? method : `flickr.${method}`
-  },
-  transformResponse: text => text.slice(14, -1)
-});
-
-const createErrorResponse = (
-  statusCode: number,
-  message?: string
-): HandlerResponse => ({
-  statusCode,
-  body: JSON.stringify({ message: message ?? "unknown error" })
-});
 
 const cache: { [key: string]: HandlerResponse } = {};
 

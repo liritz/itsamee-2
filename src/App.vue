@@ -11,7 +11,7 @@
 import { defineComponent } from "vue";
 import { flickr } from "@/api/flickr";
 import MainMenu from "@/components/MainMenu.vue";
-import PhotosetPreview from "@/components/PhotosetPreview.vue"
+import PhotosetPreview from "@/components/PhotosetPreview.vue";
 import Toast from "primevue/toast";
 import { Collection } from "./types/Flickr/Collection";
 import { mapActions, mapState } from "vuex";
@@ -29,7 +29,7 @@ export default defineComponent({
     };
   },
   created() {
-    this.loadPhotosets()
+    this.loadPhotosets();
     flickr.getTree().then(tree => (this.treeRoot = tree));
   },
   methods: mapActions(["loadPhotosets"]),
