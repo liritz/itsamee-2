@@ -1,6 +1,5 @@
 import { Content } from "@/types/domain/Content";
 import { Collection } from "@/types/Flickr/Collection";
-import { Topic } from "@/types/domain/Topic";
 import { Category } from "@/types/domain/Category";
 import { Gallery } from "@/types/domain/Gallery";
 import { getPhotoset } from "@/backend/getPhotoset";
@@ -47,30 +46,38 @@ async function createGallery({
   };
 }
 
-async function createCategory({ title, set }: Collection): Promise<Category> {
-  const galleries = await Promise.all(set?.map(createGallery) ?? []);
-  return {
-    title,
-    galleries
-  };
-}
-
-async function createTopic({ title, collection }: Collection): Promise<Topic> {
-  const categories = await Promise.all(collection?.map(createCategory) ?? []);
-  return {
-    title,
-    categories
-  };
+async function createCategory({
+  title,
+  set,
+  collection
+}: Collection): Promise<Category> {
+  if (set) {
+    const galleries = await Promise.all(set.map(createGallery));
+    return {
+      title,
+      galleries
+    };
+  }
+  if (collection) {
+    const subcategories = await Promise.all(collection.map(createCategory));
+    return {
+      title,
+      subcategories
+    };
+  }
+  throw new Error(
+    `Failed to create Category '${title}'. Missing set or collection.`
+  );
 }
 
 export async function createContent({
   title,
   collection
 }: Collection): Promise<Content> {
-  const topics = await Promise.all(collection?.map(createTopic) ?? []);
+  const categories = await Promise.all(collection?.map(createCategory) ?? []);
   return {
     pageTitle: title,
     logoUrl: process.env.LOGO_URL,
-    topics
+    categories
   };
 }

@@ -1,7 +1,7 @@
-import { Topic } from "@/types/domain/Topic";
+import { Category } from "@/types/domain/Category";
 
 export interface Content {
   pageTitle: string;
   logoUrl: string;
-  topics: Array<Topic>;
+  categories: Array<Category>;
 }

@@ -2,5 +2,6 @@ import { Gallery } from "@/types/domain/Gallery";
 
 export interface Category {
   title: string;
-  galleries: Array<Gallery>;
+  subcategories?: Array<Category>;
+  galleries?: Array<Gallery>;
 }

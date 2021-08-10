@@ -1,21 +1,22 @@
-import { flickr } from "@/api/flickr";
-import { Photoset } from "@/types/Flickr/Photoset";
 import { createStore } from "vuex";
+import { Content } from "@/types/domain/Content";
+import axios from "axios";
 
 export default createStore({
   state: {
-    photosets: new Map<string, Photoset>()
+    content: null as Content | null
   },
   mutations: {
-    addPhotoset(state, photoset: Photoset) {
-      state.photosets.set(photoset.id, photoset);
+    addContent(state, content: Content) {
+      state.content = content;
     }
   },
   actions: {
-    async loadPhotosets(context) {
-      flickr
-        .listPhotosets()
-        .then(list => list.forEach(set => context.commit("addPhotoset", set)));
+    async loadContent({ commit }) {
+      const { statusText, data } = await axios.get("/content");
+      if (statusText.toLowerCase() === "ok") {
+        commit("addContent", data);
+      }
     }
   }
 });
