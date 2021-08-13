@@ -1,6 +1,6 @@
 import { Content } from "@/types/domain/Content";
 import { Collection } from "@/types/Flickr/Collection";
-import { Category } from "@/types/domain/Category";
+import { CategoryNode } from "@/types/domain/CategoryNode";
 import { Gallery } from "@/types/domain/Gallery";
 import { getPhotoset } from "@/backend/getPhotoset";
 import { FlickrPhoto } from "@/types/Flickr/FlickrPhoto";
@@ -50,7 +50,7 @@ async function createCategory({
   title,
   set,
   collection
-}: Collection): Promise<Category> {
+}: Collection): Promise<CategoryNode> {
   if (set) {
     const galleries = await Promise.all(set.map(createGallery));
     return {

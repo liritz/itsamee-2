@@ -1,7 +1,7 @@
-import { Category } from "@/types/domain/Category";
+import { CategoryNode } from "@/types/domain/CategoryNode";
 
 export interface Content {
   pageTitle: string;
   logoUrl: string;
-  categories: Array<Category>;
+  categories: Array<CategoryNode>;
 }

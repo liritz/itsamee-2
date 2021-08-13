@@ -1,10 +1,11 @@
 import { createStore } from "vuex";
 import { Content } from "@/types/domain/Content";
 import axios from "axios";
-import { Category } from "@/types/domain/Category";
+import { CategoryNode } from "@/types/domain/CategoryNode";
 import { Gallery } from "@/types/domain/Gallery";
+import { Category } from "@/types/domain/Category";
 
-function flattenCategoryTree(category: Category): Array<Category> {
+function flattenCategoryTree(category: CategoryNode): Array<CategoryNode> {
   if (category.subcategories) {
     return [category, ...category.subcategories.flatMap(flattenCategoryTree)];
   } else {
@@ -12,7 +13,7 @@ function flattenCategoryTree(category: Category): Array<Category> {
   }
 }
 
-function getCategoryGalleries(category: Category): Array<Gallery> {
+function getCategoryGalleries(category: CategoryNode): Array<Gallery> {
   const galleries = category.galleries ?? [];
   if (category.subcategories) {
     return [
@@ -23,14 +24,21 @@ function getCategoryGalleries(category: Category): Array<Gallery> {
   return galleries;
 }
 
-function addGalleries(category: Category): Category {
-  const { title, subcategories } = category;
-  const galleries = getCategoryGalleries(category);
-  return { title, subcategories, galleries };
+function createCategory(categoryNode: CategoryNode): Category {
+  return {
+    title: categoryNode.title,
+    galleries: getCategoryGalleries(categoryNode)
+  };
 }
 
-function getGalleries({ galleries }: Category): Array<Gallery> {
-  return galleries ?? [];
+function createCategories({ categories }: Content): Array<Category> {
+  return categories.flatMap(flattenCategoryTree).map(createCategory);
+}
+
+function getGalleries({ categories }: Content): Array<Gallery> {
+  return categories
+    .flatMap(flattenCategoryTree)
+    .flatMap(cat => cat.galleries ?? []);
 }
 
 export default createStore({
@@ -43,17 +51,15 @@ export default createStore({
     addContent(state, content: Content) {
       state.content = content;
     },
-    addCategories(state, { categories }: Content) {
-      categories
-        .flatMap(flattenCategoryTree)
-        .map(addGalleries)
-        .forEach(category => state.categories.set(category.title, category));
+    addCategories(state, content: Content) {
+      createCategories(content).forEach(category =>
+        state.categories.set(category.title, category)
+      );
     },
-    addGalleries(state, { categories }: Content) {
-      categories
-        .flatMap(flattenCategoryTree)
-        .flatMap(getGalleries)
-        .forEach(gallery => state.galleries.set(gallery.title, gallery));
+    addGalleries(state, content: Content) {
+      getGalleries(content).forEach(gallery =>
+        state.galleries.set(gallery.title, gallery)
+      );
     }
   },
   actions: {
