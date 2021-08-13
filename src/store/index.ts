@@ -2,6 +2,7 @@ import { createStore } from "vuex";
 import { Content } from "@/types/domain/Content";
 import axios from "axios";
 import { Category } from "@/types/domain/Category";
+import { Gallery } from "@/types/domain/Gallery";
 
 function flattenCategoryTree(category: Category): Array<Category> {
   if (category.subcategories) {
@@ -11,17 +12,48 @@ function flattenCategoryTree(category: Category): Array<Category> {
   }
 }
 
+function getCategoryGalleries(category: Category): Array<Gallery> {
+  const galleries = category.galleries ?? [];
+  if (category.subcategories) {
+    return [
+      ...galleries,
+      ...category.subcategories.flatMap(getCategoryGalleries)
+    ];
+  }
+  return galleries;
+}
+
+function addGalleries(category: Category): Category {
+  const { title, subcategories } = category;
+  const galleries = getCategoryGalleries(category);
+  return { title, subcategories, galleries };
+}
+
+function getGalleries({ galleries }: Category): Array<Gallery> {
+  return galleries ?? [];
+}
+
 export default createStore({
   state: {
     content: null as Content | null,
-    categories: new Map<string, Category>()
+    categories: new Map<string, Category>(),
+    galleries: new Map<string, Gallery>()
   },
   mutations: {
     addContent(state, content: Content) {
       state.content = content;
     },
-    addCategory(state, category: Category) {
-      state.categories.set(category.title, category);
+    addCategories(state, { categories }: Content) {
+      categories
+        .flatMap(flattenCategoryTree)
+        .map(addGalleries)
+        .forEach(category => state.categories.set(category.title, category));
+    },
+    addGalleries(state, { categories }: Content) {
+      categories
+        .flatMap(flattenCategoryTree)
+        .flatMap(getGalleries)
+        .forEach(gallery => state.galleries.set(gallery.title, gallery));
     }
   },
   actions: {
@@ -29,9 +61,8 @@ export default createStore({
       const { statusText, data } = await axios.get<Content>("/content");
       if (statusText.toLowerCase() === "ok") {
         commit("addContent", data);
-        data.categories
-          .flatMap(flattenCategoryTree)
-          .forEach(cat => commit("addCategory", cat));
+        commit("addCategories", data);
+        commit("addGalleries", data);
       }
     }
   },
