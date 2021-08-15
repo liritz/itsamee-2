@@ -26,6 +26,7 @@ function getCategoryGalleries(category: CategoryNode): Array<Gallery> {
 
 function createCategory(categoryNode: CategoryNode): Category {
   return {
+    id: categoryNode.id,
     title: categoryNode.title,
     galleries: getCategoryGalleries(categoryNode)
   };
@@ -53,12 +54,12 @@ export default createStore({
     },
     addCategories(state, content: Content) {
       createCategories(content).forEach(category =>
-        state.categories.set(category.title, category)
+        state.categories.set(category.id, category)
       );
     },
     addGalleries(state, content: Content) {
       getGalleries(content).forEach(gallery =>
-        state.galleries.set(gallery.title, gallery)
+        state.galleries.set(gallery.id, gallery)
       );
     }
   },
@@ -73,8 +74,11 @@ export default createStore({
     }
   },
   getters: {
-    getCategory: state => (title: string): Category | undefined => {
-      return state.categories.get(title);
+    getCategory: state => (id: string): Category | undefined => {
+      return state.categories.get(id);
+    },
+    getGallery: state => (id: string): Gallery | undefined => {
+      return state.galleries.get(id);
     }
   }
 });

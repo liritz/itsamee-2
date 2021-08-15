@@ -4,35 +4,52 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
-import { Collection } from "@/types/Flickr/Collection";
-import { MenuItem } from "@/types/PrimeVue/MenuItem";
+import { MenuItem, Separator } from "@/types/PrimeVue/MenuItem";
 import { PrimeIcons } from "primevue/api";
 import Menubar from "primevue/menubar";
+import { Category } from "@/types/domain/Category";
+import { CategoryNode } from "@/types/domain/CategoryNode";
+import { Gallery } from "@/types/domain/Gallery";
 
-const menuItemFromCollection = (collection: Collection): MenuItem => {
-  const label = collection.title;
+function itemFromCategory({ title, id }: CategoryNode) {
+  return {
+    label: title,
+    to: `/category/${id}`
+  };
+}
 
-  if (collection.collection) {
-    const items = collection.collection.map(col => ({
-      label: col.title,
-      to: `/collection/${col.id}`
-    }));
+function itemFromGallery({ title, id }: Gallery) {
+  return {
+    label: title,
+    to: `/gallery/${id}`
+  };
+}
+
+function createMenuItem({
+  id,
+  title,
+  subcategories,
+  galleries
+}: CategoryNode): MenuItem | Separator {
+  const label = title;
+  const to = `/category/${id}`;
+
+  if (subcategories) {
+    const all = { label: "Alle", to };
+    const separator = { separator: true };
+    const links = subcategories.map(itemFromCategory);
+    const items = [all, separator, ...links];
     return { label, items };
   }
-
-  if (collection.set) {
-    const items = collection.set.map(col => ({
-      label: col.title,
-      to: `/set/${col.id}`
-    }));
+  if (galleries) {
+    const items = galleries.map(itemFromGallery);
     return { label, items };
   }
 
   const icon = PrimeIcons.ANGLE_DOWN;
-  const to = `/set/${collection.id}`;
 
-  return { label, to, icon };
-};
+  return { label, icon };
+}
 
 export default defineComponent({
   name: "MainMenu",
@@ -40,11 +57,11 @@ export default defineComponent({
     Menubar
   },
   props: {
-    collections: { type: Object as PropType<Collection[]>, required: true }
+    categories: { type: Object as PropType<Category[]>, required: true }
   },
   data() {
     return {
-      items: this.collections.map(menuItemFromCollection)
+      items: this.categories.map(createMenuItem)
     };
   }
 });

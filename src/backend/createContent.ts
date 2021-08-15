@@ -28,6 +28,10 @@ function createPhoto({
   };
 }
 
+function linkable(s: string): string {
+  return encodeURIComponent(s.trim().replace(" ", "_"));
+}
+
 async function createGallery({
   id,
   title,
@@ -39,6 +43,7 @@ async function createGallery({
     throw new Error(`Missing title photo in collection with id '${id}'`);
   }
   return {
+    id: linkable(title),
     title: title,
     text: description,
     photos,
@@ -54,6 +59,7 @@ async function createCategory({
   if (set) {
     const galleries = await Promise.all(set.map(createGallery));
     return {
+      id: linkable(title),
       title,
       galleries
     };
@@ -61,6 +67,7 @@ async function createCategory({
   if (collection) {
     const subcategories = await Promise.all(collection.map(createCategory));
     return {
+      id: linkable(title),
       title,
       subcategories
     };

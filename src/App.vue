@@ -1,5 +1,5 @@
 <template>
-  <main-menu v-if="treeRoot" :collections="treeRoot.collection" />
+  <main-menu v-if="categories" :categories="categories" />
   <Toast />
   <div class="page-container">
     <router-view />
@@ -10,8 +10,7 @@
 import { defineComponent } from "vue";
 import MainMenu from "@/components/MainMenu.vue";
 import Toast from "primevue/toast";
-import { Collection } from "./types/Flickr/Collection";
-import { mapActions, mapState } from "vuex";
+import { CategoryNode } from "@/types/domain/CategoryNode";
 
 export default defineComponent({
   name: "App",
@@ -19,16 +18,14 @@ export default defineComponent({
     Toast,
     MainMenu
   },
-  data() {
-    return {
-      treeRoot: null as Collection | null
-    };
-  },
   created() {
-    this.loadContent();
+    this.$store.dispatch("loadContent");
   },
-  methods: mapActions(["loadContent"]),
-  computed: mapState(["content"])
+  computed: {
+    categories(): Array<CategoryNode> | undefined {
+      return this.$store.state.content?.categories;
+    }
+  }
 });
 </script>
 

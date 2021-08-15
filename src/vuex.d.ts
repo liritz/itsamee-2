@@ -1,11 +1,14 @@
-import { ComponentCustomProperties } from "vue";
 import { Store } from "vuex";
-import { Photoset } from "./types/Flickr/Photoset";
+import { Content } from "@/types/domain/Content";
+import { Category } from "@/types/domain/Category";
+import { Gallery } from "@/types/domain/Gallery";
 
 declare module "@vue/runtime-core" {
   // declare your own store states
   interface State {
-    photosets: Map<string, Photoset>;
+    content: Content | null;
+    categories: Map<string, Category>;
+    galleries: Map<string, Gallery>;
   }
 
   // provide typings for `this.$store`
