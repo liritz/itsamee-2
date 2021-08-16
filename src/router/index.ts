@@ -1,11 +1,23 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import CollectionPage from "@/components/CollectionPage.vue";
+import CategoryView from "@/views/CategoryView.vue";
+import GalleryView from "@/views/GalleryView.vue";
+import HomeView from "@/views/HomeView.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: "/:collectionId",
-    name: "Collection",
-    component: CollectionPage
+    path: "/category/:id",
+    name: "Category",
+    component: CategoryView
+  },
+  {
+    path: "/gallery/:id",
+    name: "Gallery",
+    component: GalleryView
+  },
+  {
+    path: "/",
+    name: "Home",
+    component: HomeView
   }
 ];
 
